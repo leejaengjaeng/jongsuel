@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+<head>
+	<link href="./style.css" rel="stylesheet" />
+    
+    <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+    <script src="http://jquery.com/jquery-wp-content/themes/jquery/js/plugins.js"></script>
+	<script type="text/javascript" src="./graph/jquery.js"></script>
+	<script type="textjavascript" src="./graph/jquery.jqplot.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./graph/jquery.jqplot.min.css"> 
+    <script>
+		jQuery(window).resize(function(){
+			//폰트크기 설정
+			var browser_size = jQuery('*').width();
+			if(browser_size >= 600 || browser_size <= 1024){
+				jQuery('body').css('font-size', (browser_size*(1/1024)*0.8)+'em');
+			}
+			//사진크기대로 li, ul크기 설정
+			var profile_height = $('ul.data > li:first-child > img').height();
+			$('ul.data > li').css('height', profile_height);
+			$('ul.data').css('height', profile_height);
+			//이름 및 상세보기 버튼 가운데 정렬
+			var name_height = jQuery('li.name').height();
+			jQuery('li.name').css('line-height', name_height+'px');
+			jQuery('ul.data > li:last-child').css('line-height', name_height+'px');
+			//그래프 아이콘 크기설정
+			var graph_width = $('.graph_area').width();
+			$('.graph_area > li > img').css('width', graph_width*(30/384)+'px');
+		});
+		
+		jQuery(document).ready(function(){
+			//폰트크기 설정
+			var browser_size = jQuery('*').width();
+			if(browser_size >= 600 || browser_size <= 1024){
+				jQuery('body').css('font-size', (browser_size*(1/1024)*0.8)+'em');
+			}
+			//사진크기대로 li, ul크기 설정
+			var profile_height = $('ul.data > li:first-child > img').height();
+			$('ul.data > li').css('height', profile_height);
+			$('ul.data').css('height', profile_height);
+			//이름 및 상세보기 버튼 가운데 정렬
+			var name_height = jQuery('li.name').height();
+			jQuery('li.name').css('line-height', name_height+'px');
+			jQuery('ul.data > li:last-child').css('line-height', name_height+'px');
+			
+			//그래프 아이콘 크기설정			
+			var graph_width = $('.graph_area').width();
+			$('.graph_area > li > img').css('width', graph_width*(30/384)+'px');
+			
+			//그래프아이콘 높낮이 퍼센트 설정
+			for(var j=1; j<=5; j++){
+				var guage = [100, 75, 3, 77, 0];
+				var parent_width = $('ul.data > li:nth-child(4) > ul.graph_area').width();
+				for(var i=1; i<=5; i++){
+					var this_height = $('.graph_area > li:nth-child('+i+')').height();
+					var parent_height = $('ul.data > li:nth-child(4) > ul.graph_area').height()-this_height;
+					var calc_height = 100-guage[i-1];
+					$('ul.record_area > li:nth-child('+j+') > ul.data > li > ul.graph_area > li:nth-child('+i+')').css('margin-top', ((parent_height/parent_width)*calc_height)+'%');
+				}
+			}
+			
+			/*
+			for(var i=1; i<=5; i++){
+				$('.graph_area > li:nth-child('+i+')').css('margin-top', 
+				($('.graph_area').height()*(guage[i-1]*(1/100)))
+				- $('.graph_area > li:nth-child('+i+') > img').height()+'px');
+			}*/
+		});
+	</script>
+   <title> Admin Page</title>
+</head>
+
+
+<body>
+
+<div id="wrap">
+  <h1> PERS(Personal Emotion Reporting System)</h1>
+  <h3>  OOO 선생님</h2>
+  
+  <ul class="field_area">
+      <li class="line"></li>
+      <li class="field_wrap">
+         <ul class="field">
+            <li>사진</li>
+            <li>이름</li>
+            <li>최근 키워드</li>
+            <li>최근 5일간의 데이터</li>
+            <li>상세보기</li>
+         </ul>
+      </li>
+      <li class="line"></li>
+   </ul>
+   <ul class="record_area">
+   
+      <li class="record">
+         <ul class="data">
+            <li><img class=".profile_img" src="./1.png" /></li>
+            <li class="name">이재영</li>
+            <li><span>"피곤하다"</span><span>"공부"</span></li>
+            <li>
+				<ul class="graph_area">
+					<li><img src="./img/graph_face_1.png" /></li>
+					<li><img src="./img/graph_face_3.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_5.png" /></li>
+				</ul>
+				<ul class="graph_x">
+					<li>5일전</li>
+					<li>4일전</li>
+					<li>3일전</li>
+					<li>2일전</li>
+					<li>1일전</li>
+				</ul>
+			</li>
+            <li><input type=submit value="Detail" onclick="details.html?user_id=1"></li>
+         </ul>
+       </li>
+	   
+      <li class="record">
+         <ul class="data">
+            <li><img class=".profile_img" src="./2.png" /></li>
+            <li class="name">이희현</li>
+            <li><span>"팀프"</span><span>"힘들다"</span></li>
+            <li>
+				<ul class="graph_area">
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_3.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_2.png" /></li>
+				</ul>
+				<ul class="graph_x">
+					<li>5일전</li>
+					<li>4일전</li>
+					<li>3일전</li>
+					<li>2일전</li>
+					<li>1일전</li>
+				</ul>
+			</li>
+            <li><input type=submit value="Detail"></li>
+         </ul>
+       </li>
+	   
+      <li class="record">
+         <ul class="data">
+            <li><img class=".profile_img" src="./3.png" /></li>
+            <li class="name">백승연</li>
+            <li><span>"다이어트"</span><span>"지원서"</span></li>
+            <li>
+				<ul class="graph_area">
+					<li><img src="./img/graph_face_1.png" /></li>
+					<li><img src="./img/graph_face_3.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_4.png" /></li>
+					<li><img src="./img/graph_face_5.png" /></li>
+				</ul>
+				<ul class="graph_x">
+					<li>5일전</li>
+					<li>4일전</li>
+					<li>3일전</li>
+					<li>2일전</li>
+					<li>1일전</li>
+				</ul>
+			</li>
+            <li><input type=submit value="Detail"></li>
+         </ul>
+       </li>
+		
+	   
+	   
+       <li class="record">
+          <ul class="data">
+            <li><img class=".profile_img" src="./4.png" /></li>
+            <li class="name">박주영</li>
+            <li><span>"다이어트"</span><span>"지원서"</span></li>
+            <li>
+				<ul class="graph_area">
+					<li><img src="./img/graph_face_2.png" /></li>
+					<li><img src="./img/graph_face_3.png" /></li>
+					<li><img src="./img/graph_face_2.png" /></li>
+					<li><img src="./img/graph_face_3.png" /></li>
+					<li><img src="./img/graph_face_5.png" /></li>
+				</ul>
+				<ul class="graph_x">
+					<li>5일전</li>
+					<li>4일전</li>
+					<li>3일전</li>
+					<li>2일전</li>
+					<li>1일전</li>
+				</ul>
+			</li>
+            <li><input type=submit value="Detail"></li>
+          </ul>
+        </li>
+	   
+   </ul>
+      
+ </div>
+      
+
+</body>
+</html>
