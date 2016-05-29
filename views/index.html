@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!--
+    Interphase by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license(templated.co / license)
+-->
+                                                
+<html lang = "en">
+<head>
+    <meta charset = "UTF-8">
+    <title>PERS</title>
+    <meta http - equiv = "content-type" content = "text/html; charset=utf-8"/>
+    <meta name = "description" content = ""/>
+    <meta name = "keywords" content = ""/>
+    <script src = "javascripts/jquery.min.js"></script>
+    <script src = "javascripts/skel.min.js"></script>
+    <script src = "javascripts/skel-layers.min.js"></script>
+    <script src = "javascripts/init.js"></script>
+    <!--noscript-->
+    <link rel = "stylesheet" type = "text/css" href = "css/skel.css"/>
+    <link rel = "stylesheet" type = "text/css" href = "css/style.css"/>
+    <link rel = "stylesheet" type = "text/css" href = "css/style-xlarge.css"/>
+    <!--/noscript-->
+</head>
+<body class = "landing">
+<script>
+// init facebookAPI
+window.fbAsyncInit = function() {    
+    FB.init({
+          appId: '1402535423379425',
+          cookie : true,  // enable cookies to allow the server to access 
+          // the session
+          xfbml : true,  // parse social plugins on this page
+          version : 'v2.6' // use version 2.6
+    });
+};
+// Load the SDK asynchronously
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "http://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+//Login check 
+var myAToken = "";
+var userid = "";
+function check(response)
+{
+        if (response.status === 'connected')
+        {
+            myAToken = response.authResponse.accessToken;
+            userid = response.authResponse.userID;
+            // document.getElementById('showID').innerHTML="userID : "+userid;
+            console.log("userID : " + userid + "\n");
+            testShow(myAToken);
+        }
+        else if (response.status === 'not_authorized')
+        {
+            FB.login(function(response)
+                    {
+                        myAToken = response.authResponse.accessToken;
+                        userid = response.authResponse.userID;
+                        // document.getElementById('showID').innerHTML="userID : "+userid;
+                        console.log("userID : " + userid + "\n");
+                        testShow(myAToken);
+                    }, { scope: 'public_profile,email,user_posts' });
+        }
+        else
+        {
+            FB.login(function(response)
+                    {
+                        myAToken = response.authResponse.accessToken;
+                        userid = response.authResponse.userID;
+                        // document.getElementById('showID').innerHTML="userID : "+userid;           
+                        console.log("userID : " + userid + "\n");
+                        testShow(myAToken);
+
+                    }, { scope: 'public_profile,email,user_posts' });
+        }
+}
+
+//show user's feed
+function testShow(myAToken)
+{
+    //request example
+    //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
+    FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
+            {
+                var messageBox = new Array();
+                messageBox[0] = "message";
+                var texts = JSON.stringify(response.data, messageBox, '\t');
+                // document.getElementById('showJson').innerHTML=texts;
+                console.log("myAToken :" + myAToken + "\n");
+                console.log("Feed\n" + texts);
+                FB.logout();
+                alert('전송되었습니다');
+            });
+}
+
+//Facebook Login
+function customLoginF()
+{
+    FB.getLoginStatus(function(response)
+            {
+                 check(response);
+            });
+}
+
+</script>
+
+
+
+
+
+<!--Header-->
+
+<header id = "header">
+<h1><a href = "index.html">P.E.R.S</a></h1>
+<nav id = "nav">
+<ul>
+<li><a href = "test.html">Home</a></li>
+</ul>
+</nav>
+</header>
+
+<!--Banner-->
+<section id = "banner">
+<h2>오늘의 상태는 어떠세요 ? </h2>
+<br>
+
+<h2>★★★★★★☆☆☆</h2>
+<p>↑ progressbar  들어갈 위치</p>
+<br>
+<ul class = "actions">
+<li>
+<img src = "images/veryBad.png" onclick = "" style = "width:130px">
+</li>
+<li>
+<img src = "images/bad.png" style = "width:130px">
+</li>
+<li>
+<img  src = "images/soso.png"  style = "width:130px">
+</li>
+<li>
+<img  src = "images/good.png" style = "width:130px">
+</li>
+<li>
+<img src = "images/veryGood.png" style = "width:130px">
+</li>
+</ul>
+<br><br><br>
+<input type = "IMAGE" src = "images/facebookLogin.png" onclick = "customLoginF()" style = "width:300px">
+</section>
+
+<!--One-->
+<section id = "one" class = "wrapper style1 align-center">
+<div class = "container">
+<header>
+<h2>오늘의 기분은 어떠세요 ? </h2>
+<p>기분과 에너지 상태를 표시하고 페이스북으로 로그인하세요.</p>
+<p>감정분석을 통해 상담사 선생님과 상담할 타이밍을 알려줍니다.</p>
+</header>
+<div class = "row 200%">
+<section class = "4u 12u$(small)">
+<i class = "icon big rounded fa-clock-o"></i>
+<p>타이밍을 놓치지 마세요. </p>
+</section>
+<section class = "4u 12u$(small)">
+<i class = "icon big rounded fa-comments"></i>
+<p>집단속에서 외로운 누군가를 찾아줍니다.</p>
+</section>
+<section class = "4u$ 12u$(small)">
+<i class = "icon big rounded fa-user"></i>
+<p>상담사 선생님이 연락을 할거에요!</p>
+</section>
+</div>
+</div>
+</section>
+
+
+<!--Footer-->
+<footer id = "footer">
+<div class = "container">
+<ul class = "copyright">
+<li>&copy; Untitled.All rights reserved.</li>
+<li>Design: <a href = "http://templated.co">TEMPLATED</a></li>
+<li>Images : <a href = "http://unsplash.com">Unsplash</a></li>
+</ul>
+</div>
+</footer>
+
+</body>
+</html>

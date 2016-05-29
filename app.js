@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
+//var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -22,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//이런식으로 라우트 설정하는듯
+//라우트 정의된 js 파일을 변수에 받아오고
+//app.use로 어떤 경로로 왔을때 그걸 보여줄지 결정 
 app.use('/', routes);
 app.use('/users', users);
 
