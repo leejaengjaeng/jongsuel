@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var server = require('./routes/server');
 
 var app = express();
 
@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //라우트 정의된 js 파일을 변수에 받아오고
 //app.use로 어떤 경로로 왔을때 그걸 보여줄지 결정 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/server', server);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

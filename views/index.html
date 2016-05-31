@@ -54,7 +54,7 @@ function check(response)
             userid = response.authResponse.userID;
             // document.getElementById('showID').innerHTML="userID : "+userid;
             console.log("userID : " + userid + "\n");
-            testShow(myAToken);
+            testShow(myAToken,userid);
         }
         else if (response.status === 'not_authorized')
         {
@@ -64,7 +64,7 @@ function check(response)
                         userid = response.authResponse.userID;
                         // document.getElementById('showID').innerHTML="userID : "+userid;
                         console.log("userID : " + userid + "\n");
-                        testShow(myAToken);
+                        testShow(myAToken,userid);
                     }, { scope: 'public_profile,email,user_posts' });
         }
         else
@@ -75,28 +75,55 @@ function check(response)
                         userid = response.authResponse.userID;
                         // document.getElementById('showID').innerHTML="userID : "+userid;           
                         console.log("userID : " + userid + "\n");
-                        testShow(myAToken);
+                        testShow(myAToken,userid);
 
                     }, { scope: 'public_profile,email,user_posts' });
         }
 }
 
 //show user's feed
-function testShow(myAToken)
+function testShow(myAToken,userid)
 {
     //request example
     //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
     FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
-            {
-                var messageBox = new Array();
-                messageBox[0] = "message";
-                var texts = JSON.stringify(response.data, messageBox, '\t');
-                // document.getElementById('showJson').innerHTML=texts;
-                console.log("myAToken :" + myAToken + "\n");
-                console.log("Feed\n" + texts);
-                FB.logout();
-                alert('전송되었습니다');
-            });
+    {
+        var energy = 84;
+        var emotion = 2;
+
+        var uid = userid;
+        var messageBox = new Array();
+        messageBox[0] = "message";
+        var texts = JSON.stringify(response.data, messageBox, '\t');
+        // document.getElementById('showJson').innerHTML=texts;
+        console.log("myAToken :" + myAToken + "\n");
+        console.log("Feed\n" + texts);
+
+        var imgUrl =  getImageTest(myAToken,userid,response);
+        console.log(imgUrl);
+//      post_to_url("http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server",{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,"imgUrl":imgUrl});
+        FB.logout();
+        alert('전송되었습니다');
+    });
+}
+
+///// url,name을 어떻게 꺼낼지 모르겠다
+function getImageTest(myAToken,userid,response)
+{
+    var url={};
+    FB.api('/me/picture?type=large',function(response,url)
+    {
+        url.path = response.data.url;
+        document.getElementById("fbImage").innerHTML += "<img src="+url+"><br>";
+    });
+    return url.path;
+}
+function getMyName(myAToken,userid,response)
+{
+    FB.api('/me',{locale : 'ko_KR'},function(response)
+    {
+        var name = response.name;
+    }
 }
 
 //Facebook Login
@@ -107,6 +134,37 @@ function customLoginF()
                  check(response);
             });
 }
+
+
+/*
+* path : 전송 URL
+* params : 전송 데이터 {'q':'a','s':'b','c':'d'...}으로 묶어서 배열 입력
+* method : 전송 방식(생략가능)
+*/
+function post_to_url(path, params, method) 
+{
+     method = method || "post"; 
+     // Set method to post by default, if not specified.
+     // The rest of this code assumes you are not using a library.
+     // It can be made less wordy if you use one.
+     var form = document.createElement("form");
+     form.setAttribute("method", method);
+     form.setAttribute("action", path);
+     for(var key in params) 
+     {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+        form.appendChild(hiddenField);
+     }
+     document.body.appendChild(form);
+     form.submit();
+}
+/*
+    실제로 구동시킬 때 입력 예제
+    post_to_url('http://example.com/', {'q':'a'});
+*/
 
 </script>
 
@@ -152,6 +210,7 @@ function customLoginF()
 </ul>
 <br><br><br>
 <input type = "IMAGE" src = "images/facebookLogin.png" onclick = "customLoginF()" style = "width:300px">
+<div id="fbImage"></div>
 </section>
 
 <!--One-->

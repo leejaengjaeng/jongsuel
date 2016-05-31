@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+<head>
+
+   <style>
+      *{margin:0 none; font-family:"맑은 고딕"; letter-spacing:-1.3px; font-size:1.0em; color:#333}
+	  
+	  body{width:98%}
+	  #wrap{width:1000px; margin:0 auto;}
+	  
+	  body > h1 {font-size:1.4em; clear:both; float:left}
+	  body > h3 {font-size:1.2em; clear:both; float:left}
+      ul{width:100%; list-style:none; margin:0px; padding:0px; min-width:500px;}
+      ul.field_area{clear:both; height:37px;}
+      ul.field_area li.line{height:1px; background:#ccc; width:100%; clear:both; float:left;}
+      ul.field_area li.field_wrap{
+         background:#fff; width:100%; 
+         margin-top:5px; margin-bottom:5px; clear:both; float:left;
+      }
+	  
+      ul.field{
+         height:25px; font-size:0.8em; line-height:25px; 
+         list-style:none; margin:0px; padding:0px;
+      }
+	  
+      ul.field > li{font-weight:bold; text-align:center; float:left; clear:none;}
+      ul.field > li:first-child{width:15%; border-right:1px solid #aaa}
+      ul.field > li:nth-child(2){width:12%; border-right:1px solid #aaa}
+      ul.field > li:nth-child(3){width:23%; border-right:1px solid #aaa}
+      ul.field > li:nth-child(4){width:35%; border-right:1px solid #aaa}
+      ul.field > li:last-child{width:14%}
+      
+      ul.record_area{
+		width:100%; clear:both; float:left; margin-bottom:20px;
+	  }
+	  
+      li.record{
+		  width:100%; clear:both; border-bottom:1px solid #ccc;
+		  text-align:center; float:left; padding-top:5px !important; padding-bottom:5px !important;
+	  }
+	  
+	  li.record:hover{background-color:#ccc;}
+	  
+      li.record > li:last-child{border-bottom:2px solid #aaa}
+      
+      li.record > ul.data > li {float:left; height:90px; padding:0 none; margin:0 none;}
+	  
+      li.record > ul.data > li > img{width:100%}
+      li.record > ul.data > li:first-child{width:14%; height:140px; padding-left:1%; border-right:1px solid none}
+      li.record > ul.data > li:nth-child(2){width:12%; padding-top:50px; border-right:1px solid none; vertical-align:text-indent}
+      li.record > ul.data > li:nth-child(3){width:23%; padding-top:50px; border-right:1px solid none}
+      li.record > ul.data > li:nth-child(4){width:35%; height:140px; border-right:1px solid none; vertical-align:middle}
+	  li.record > ul.data > li:last-child{width:15%; padding-top:50px;}
+	  
+	  ul.data > li > span{clear:both; display:block;}
+	</style>
+    
+   <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+   <script src="http://jquery.com/jquery-wp-content/themes/jquery/js/plugins.js"></script>
+
+   <title> Admin Page</title>
+</head>
+
+
+<body>
+
+<div id="wrap">
+  <h1> PERS(Personal Emotion Reporting System)</h1>
+  <h3>  OOO 선생님</h2>
+  
+  <ul class="field_area">
+      <li class="line"></li>
+      <li class="field_wrap">
+         <ul class="field">
+            <li>사진</li>
+            <li>이름</li>
+            <li>최근 키워드</li>
+            <li>최근 5일간의 데이터</li>
+            <li>상세보기</li>
+         </ul>
+      </li>
+      <li class="line"></li>
+   </ul>
+ 
+   <ul class="record_area">
+   
+      <li class="record">
+         <ul class="data">
+            <li><img id="#img" src="images/1.png"/></li>
+            <li>이재영</li>
+            <li><span>"피곤하다"</span><span>"공부"</span></li>
+            <li><img id="#img" src="images/1.jpg"/></li>
+            <li><input type=submit value="Detail"></li>
+         </ul>
+       </li>
+	   
+        <li class="record">
+          <ul class="data">
+              <li><img id="#img" src="images/2.png"/></li>
+            <li>이희현</li>
+            <li>"과사"&nbsp;"힘들다"</li>
+            <li><img id="#img" src="images/2.jpg""/></li>
+            <li><input type=submit value="Detail"></li>
+          </ul>
+        </li>
+	   
+		<li class="record">
+			<ul class="data">
+                <li><img id="#img" src="images/3.png"/></li>
+				<li>백승연</li>
+				<li>"다이어트" "지원서"</li>
+                <li><img id="#img" src="images/3.jpg"/></li>
+				<li><input type=submit value="Detail"></li>
+			</ul>
+		</li>
+		
+        <li class="record">
+           <ul class="data">
+               <li><img id="#img" src="images/4.png"/></li>
+              <li>박주영</li>
+              <li>"과제" "배고프다"</li>
+              <li><img id="#img" src="images/4.jpg"/></li>
+              <li><input type=submit value="Detail"></li>
+           </ul>
+        </li>
+		
+   </ul>
+      
+ </div>
+      
+
+</body>
+</html>
