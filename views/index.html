@@ -80,7 +80,7 @@ function check(response)
                     }, { scope: 'public_profile,email,user_posts' });
         }
 }
-
+/*
 //show user's feed
 function testShow(myAToken,userid)
 {
@@ -98,10 +98,50 @@ function testShow(myAToken,userid)
         // document.getElementById('showJson').innerHTML=texts;
         console.log("myAToken :" + myAToken + "\n");
         console.log("Feed\n" + texts);
-
-        var imgUrl =  getImageTest(myAToken,userid,response);
+        
+        new Promise(resolve,reject){
+            getImageTest(myAToken,userid,response);
+        
+            var uName = getMyName(myAToken,userid,response);
         console.log(imgUrl);
-//      post_to_url("http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server",{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,"imgUrl":imgUrl});
+        post_to_url("http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server",{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,"imgUrl":imgUrl});
+        FB.logout();
+        alert('전송되었습니다');
+    });
+}*/
+
+//show user's feed
+function testShow(myAToken,userid)
+{
+    //request example
+    //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
+    FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
+    {
+        var energy = 84;
+        var emotion = 2;
+        var uid = userid;
+        var messageBox = new Array();
+        messageBox[0] = "message";
+        var texts = JSON.stringify(response.data, messageBox, '\t');
+        // document.getElementById('showJson').innerHTML=texts;
+        var getImg = new Promise(function(resolve,reject){
+                    FB.api('/me/picture?type=large',function(response)
+                    {
+                        var imgUrl = response.data.url;
+                        resolve(imgUrl);
+                    });
+                 });
+        var getUname = new Promise(function(resolve,reject){
+                    FB.api('/me',{locale : 'ko_KR'},function(response)
+                    {
+                       var uname = response.name;
+                       resolve(uname);
+                    });
+                 });
+        var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
+
+        Promise.all([getImg,getUname,args]).then(post_to_url);
+        
         FB.logout();
         alert('전송되었습니다');
     });
@@ -111,28 +151,33 @@ function testShow(myAToken,userid)
 function getImageTest(myAToken,userid,response)
 {
     var url={};
-    FB.api('/me/picture?type=large',function(response,url)
+    FB.api('/me/picture?type=large',function(response)
     {
         url.path = response.data.url;
         document.getElementById("fbImage").innerHTML += "<img src="+url+"><br>";
     });
-    return url.path;
+    var returnPath = function(url){return url.path;};
+            
+    setTimeout(returnPath(url),5000);
 }
 function getMyName(myAToken,userid,response)
 {
+    var name;
     FB.api('/me',{locale : 'ko_KR'},function(response)
     {
-        var name = response.name;
-    }
+        name = response.name;
+    });
+
+    return name;
 }
 
 //Facebook Login
 function customLoginF()
 {
-    FB.getLoginStatus(function(response)
-            {
-                 check(response);
-            });
+   FB.getLoginStatus(function(response)
+   {
+        check(response);
+   });
 }
 
 
@@ -141,15 +186,13 @@ function customLoginF()
 * params : 전송 데이터 {'q':'a','s':'b','c':'d'...}으로 묶어서 배열 입력
 * method : 전송 방식(생략가능)
 */
-function post_to_url(path, params, method) 
+
+function post_to_url(input) 
 {
-     method = method || "post"; 
-     // Set method to post by default, if not specified.
-     // The rest of this code assumes you are not using a library.
-     // It can be made less wordy if you use one.
      var form = document.createElement("form");
-     form.setAttribute("method", method);
-     form.setAttribute("action", path);
+     form.setAttribute("method", "post");
+     form.setAttribute("action", input[2][0]);
+     var params = input[2][1];
      for(var key in params) 
      {
         var hiddenField = document.createElement("input");
@@ -158,9 +201,22 @@ function post_to_url(path, params, method)
         hiddenField.setAttribute("value", params[key]);
         form.appendChild(hiddenField);
      }
+     var hiddenField = document.createElement("input");
+     hiddenField.setAttribute("type", "hidden");
+     hiddenField.setAttribute("name", "imgUrl");
+     hiddenField.setAttribute("value", input[0]);
+     form.appendChild(hiddenField);
+
+     var hiddenField = document.createElement("input");
+     hiddenField.setAttribute("type", "hidden");
+     hiddenField.setAttribute("name", "uname");
+     hiddenField.setAttribute("value", input[1]);
+     form.appendChild(hiddenField);
+     
      document.body.appendChild(form);
      form.submit();
 }
+
 /*
     실제로 구동시킬 때 입력 예제
     post_to_url('http://example.com/', {'q':'a'});
@@ -189,8 +245,6 @@ function post_to_url(path, params, method)
 <br>
 
 <h2>★★★★★★☆☆☆</h2>
-<p>↑ progressbar  들어갈 위치</p>
-<br>
 <ul class = "actions">
 <li>
 <img src = "images/veryBad.png" onclick = "" style = "width:130px">
