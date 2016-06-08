@@ -13,18 +13,32 @@ router.post('/', function(req,res,next){
     var energy =  " energy :" + req.body.energy;
     var feeling =  " emotion : "+req.body.emotion;
     var imgUrl = "imgUrl : "+req.body.imgUrl;
+    var date = req.body.date;
     var uname = req.body.uname;
-    
-    var text = JSON.parse(req.body.messages);
+    var text="";
     var realText="";
-    for(key in text)
+    console.log(req.body.messages);
+
+    //null 체크를 이렇게 밖에못하는 자신을 탓해봅시다
+    if(req.body.messages == "undefined")
     {
-        if(text[key].message === undefined) continue;
-        realText += text[key].message+"\n";
-    }  
+        console.log('왜 안찍히냐');
+    }
+    else
+    {
+        console.log('씨발! : '+req.body.messages);
+        text = JSON.parse(req.body.messages);
+        var realText="";
+        for(key in text)
+        {
+           if(text[key].message === undefined) continue;
+           realText += text[key].message+"\n";
+        }
+    }
+
     /* 
     mecab.extractSortedNounCounts(realText,function(err,result){
-        console.log("---------형태소------");
+        console.log("---------명사 추출------");
         for(key in result)
         {
             console.log(result[key].noun +","+result[key].count);
@@ -34,44 +48,69 @@ router.post('/', function(req,res,next){
     */
     
     console.log("----------형태소 분석------");
-    /*
-    mecab.parse(realText,function(err,result){
-        var t ="";
-        for(key in result)
-        {
-            if(result[key][0].length!=1)
-            {
-                if((result[key][1].indexOf("+EC") != -1) || (result[key][1].indexOf("NNG") != -1))
-                    t += result[key][0]+"<br>";
-            }
-            else continue;
-        }
-        //console.log(result);
-    });
-    */
-    var printT = function(result){res.send(result);} 
- 
-    new Promise(function(resolve,reject){
-        mecab.parse(realText,function(err,result){
-            if(err) return reject(err);
-
-            var t =[];
-            var cnt=0;
-            for(key in result)
-            {
-                if(result[key][0].length!=1)
+    var responseToClinet = function()
+    {
+        res.writeHead(301,
                 {
-                    if((result[key][1].indexOf("+EC") != -1) || (result[key][1].indexOf("NNG") != -1))
-                        t[cnt++] = result[key][0];
+                    Location:'http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/'
                 }
-                else continue;
+        );
+        console.log('response Done');
+        res.end();
+    } 
+    var insertWords = function(result){
+    //    res.send(result);
+        var insertQuery = 'insert into word values';
+        var n = result.length;
+        if(n==0);
+        else
+        {
+            for(var i=0;i<n;i++)
+            {
+                insertQuery += '(\'\','+userId+',\''+result[i]+'\'),';   
             }
-            resolve(t);
-        });
-        //printT() 같은 형식이 아니라는거 주의!
-    }).then(printT);
+            //마지막 , 제거
+            insertQuery = insertQuery.slice(0,-1);
+            //dbConn.query('insert into word values('',?,?)',[userId,result[i]],function(err,rows)
+            console.log(insertQuery);
+            dbConn.query(insertQuery,[],function(err,rows)
+            {
+               if(err)
+               {
+                    console.log('Word INSERT Err');
+                    console.error(err);
+                    return next(err);
+                }  
+                else
+                {
+                   console.log(i+': word insert done..');
+                }
+            });
+        }
+        responseToClinet();
+    } 
+   
+    var wordCheck = function(){
+        new Promise(function(resolve,reject){
+            mecab.parse(realText,function(err,result){
+                if(err) return reject(err);
 
-/*
+                var t =[];
+                var cnt=0;
+                for(key in result)
+                {
+                    if(result[key][0].length!=1)
+                    {
+                        if((result[key][1].indexOf("+EC") != -1) || (result[key][1].indexOf("NNG") != -1))
+                            t[cnt++] = result[key][0];
+                    }
+                    else continue;
+                }
+                resolve(t);
+            });
+        //printT() 같은 형식이 아니라는거 주의!
+        }).then(insertWords);
+    }
     dbConn.query('select uid from user where uid = ?',[userId],function(err,rows){
         if(err)
         {
@@ -99,7 +138,7 @@ router.post('/', function(req,res,next){
                     console.log('user insert done..');
                  }
             });
-            dbConn.query('INSERT INTO emotion values(?,?,?,?)',['',uname,energy,feeling],function(err,rows)
+            dbConn.query('INSERT INTO emotion values(\'\',?,?,?)',[uname,energy,feeling],function(err,rows)
             {
                 if(err)
                 {
@@ -112,6 +151,7 @@ router.post('/', function(req,res,next){
                     console.log('emotion insert done..');
                 }
             });
+            wordCheck();
         }
         //이용중인 사용자
         else
@@ -130,9 +170,9 @@ router.post('/', function(req,res,next){
                     console.log('emotion insert done..');
                 }
             });
+            wordCheck();
         }
     });
-*/
 });
 
 module.exports = router;

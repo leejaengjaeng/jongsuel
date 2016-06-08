@@ -46,7 +46,7 @@ window.fbAsyncInit = function() {
 //Login check 
 var myAToken = "";
 var userid = "";
-function check(response)
+function check(response,flag)
 {
         if (response.status === 'connected')
         {
@@ -54,7 +54,7 @@ function check(response)
             userid = response.authResponse.userID;
             // document.getElementById('showID').innerHTML="userID : "+userid;
             console.log("userID : " + userid + "\n");
-            testShow(myAToken,userid);
+            testShow(myAToken,userid,flag);
         }
         else if (response.status === 'not_authorized')
         {
@@ -64,7 +64,7 @@ function check(response)
                         userid = response.authResponse.userID;
                         // document.getElementById('showID').innerHTML="userID : "+userid;
                         console.log("userID : " + userid + "\n");
-                        testShow(myAToken,userid);
+                        testShow(myAToken,userid,flag);
                     }, { scope: 'public_profile,email,user_posts' });
         }
         else
@@ -75,76 +75,152 @@ function check(response)
                         userid = response.authResponse.userID;
                         // document.getElementById('showID').innerHTML="userID : "+userid;           
                         console.log("userID : " + userid + "\n");
-                        testShow(myAToken,userid);
+                        testShow(myAToken,userid,flag);
 
                     }, { scope: 'public_profile,email,user_posts' });
         }
 }
-/*
+//time Setting for get feed
+//..? 여기에 넣으면 근데 하루에 한번씩 서버 다시 켜야되나 
+  var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10) {
+            dd='0'+dd
+    } 
+    if(mm<10) {
+            mm='0'+mm
+    } 
+    today = yyyy+'-'+mm+'-'+dd;
+    
+    var yesterDay = new Date(dd+'/'+mm+'/'+yyyy);
+    var dayOfMonth = yesterDay.getDate();
+    yesterDay.setDate(ydd-1);
+    var ydd = yesterDay.getDate();
+    var ymm = yesterDay.getMonth()+1;
+    var yyyyy = yesterDay.getFullYear();
+    if(ydd<10) {
+            ydd='0'+ydd
+    } 
+    if(ymm<10) {
+            ymm='0'+ymm
+    } 
+    yesterDay = yyyyy+'-'+ymm+'-'+ydd;
+
+    //편의를 위해 4달(약 120일 로 설정)
+    var before100Days = new Date(dd+'/'+mm+'/'+yyyy);
+    var monthOfYear = before100Days.getMonth();
+    before100Days.setMonth(monthOfYear-4);
+    var dd100 = before100Days.getDate();
+    var mm100 = before100Days.getMonth();
+    var yy100 = before100Days.getFullYear();
+    if(dd100<10) {
+            dd100='0'+dd100
+    } 
+    if(mm100<10) {    
+        mm100='0'+mm100
+    } 
+   before100Days = yy100+'-'+mm100+'-'+dd100;
+   
+
 //show user's feed
-function testShow(myAToken,userid)
+function testShow(myAToken,userid,flag)
 {
-    //request example
+   
+    var energy = 84;
+    var emotion = 2;
+    var uid = userid;
+     
     //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
-    FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
+    if(flag==1)//전체 피드
     {
-        var energy = 84;
-        var emotion = 2;
-
-        var uid = userid;
-        var messageBox = new Array();
-        messageBox[0] = "message";
-        var texts = JSON.stringify(response.data, messageBox, '\t');
-        // document.getElementById('showJson').innerHTML=texts;
-        console.log("myAToken :" + myAToken + "\n");
-        console.log("Feed\n" + texts);
-        
-        new Promise(resolve,reject){
-            getImageTest(myAToken,userid,response);
-        
-            var uName = getMyName(myAToken,userid,response);
-        console.log(imgUrl);
-        post_to_url("http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server",{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,"imgUrl":imgUrl});
-        FB.logout();
-        alert('전송되었습니다');
-    });
-}*/
-
-//show user's feed
-function testShow(myAToken,userid)
-{
-    //request example
-    //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
-    FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
+        FB.api('/me/feed?access_token=' + myAToken + '&limit=300', function(response)
+        {
+           var messageBox = new Array();
+            messageBox[0] = "message";
+            var texts = JSON.stringify(response.data, messageBox, '\t');
+            // document.getElementById('showJson').innerHTML=texts;
+            var getImg = new Promise(function(resolve,reject){
+               FB.api('/me/picture?type=large',function(response)
+               {
+                  var imgUrl = response.data.url;
+                  resolve(imgUrl);
+               });
+            });
+            var getUname = new Promise(function(resolve,reject){
+                 FB.api('/me',{locale : 'ko_KR'},function(response)
+                 {
+                    var uname = response.name;
+                    resolve(uname);
+                 });
+            });
+            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
+            Promise.all([getImg,getUname,args]).then(post_to_url);      
+            FB.logout();
+            alert('전체 피드 전송되었습니다');
+        });
+    }
+    else if(flag==0)//오늘 피드
     {
-        var energy = 84;
-        var emotion = 2;
-        var uid = userid;
-        var messageBox = new Array();
-        messageBox[0] = "message";
-        var texts = JSON.stringify(response.data, messageBox, '\t');
-        // document.getElementById('showJson').innerHTML=texts;
-        var getImg = new Promise(function(resolve,reject){
-                    FB.api('/me/picture?type=large',function(response)
-                    {
-                        var imgUrl = response.data.url;
-                        resolve(imgUrl);
-                    });
+        FB.api('/me/feed?access_token=' + myAToken + '&since='+yesterDay+'&until='+today+'&limit=300', function(response)
+        {
+           var messageBox = new Array();
+            messageBox[0] = "message";
+            var texts = JSON.stringify(response.data, messageBox, '\t');
+            // document.getElementById('showJson').innerHTML=texts;
+            var getImg = new Promise(function(resolve,reject){
+               FB.api('/me/picture?type=large',function(response)
+               {
+                  var imgUrl = response.data.url;
+                  resolve(imgUrl);
+               });
+            });
+            var getUname = new Promise(function(resolve,reject){
+                 FB.api('/me',{locale : 'ko_KR'},function(response)
+                 {
+                    var uname = response.name;
+                    resolve(uname);
                  });
-        var getUname = new Promise(function(resolve,reject){
-                    FB.api('/me',{locale : 'ko_KR'},function(response)
-                    {
-                       var uname = response.name;
-                       resolve(uname);
-                    });
+            });
+            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
+            Promise.all([getImg,getUname,args]).then(post_to_url);      
+            FB.logout();
+            alert('오늘 피드 전송되었습니다');
+        });
+    } 
+    else if(flag==2)//100일(4달치) 피드
+    {
+        FB.api('/me/feed?access_token=' + myAToken + '&since='+before100Days+'&until='+today+'&limit=300', function(response)
+        {
+            var messageBox = new Array();
+            messageBox[0] = "message";
+            var texts = JSON.stringify(response.data, messageBox, '\t');
+            // document.getElementById('showJson').innerHTML=texts;
+            var getImg = new Promise(function(resolve,reject){
+               FB.api('/me/picture?type=large',function(response)
+               {
+                  var imgUrl = response.data.url;
+                  resolve(imgUrl);
+               });
+            });
+            var getUname = new Promise(function(resolve,reject){
+                 FB.api('/me',{locale : 'ko_KR'},function(response)
+                 {
+                    var uname = response.name;
+                    resolve(uname);
                  });
-        var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
-
-        Promise.all([getImg,getUname,args]).then(post_to_url);
-        
-        FB.logout();
-        alert('전송되었습니다');
-    });
+            });
+            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
+            Promise.all([getImg,getUname,args]).then(post_to_url);      
+            FB.logout();
+            alert('최근 피드 전송되었습니다');
+        });
+    }
+    else
+   {
+        console.log('0:오늘피드, 1:모든피드, 2:100일치(4달치) 피드');
+   }
 }
 
 ///// url,name을 어떻게 꺼낼지 모르겠다
@@ -172,11 +248,12 @@ function getMyName(myAToken,userid,response)
 }
 
 //Facebook Login
-function customLoginF()
+//flag) 0: 오늘의 피드 가져오기, 1: 모든 피드 가져오기, 2: 100일치 피드 가져오기
+function customLoginF(flag)
 {
    FB.getLoginStatus(function(response)
    {
-        check(response);
+        check(response,flag);
    });
 }
 
@@ -234,7 +311,8 @@ function post_to_url(input)
 <h1><a href = "index.html">P.E.R.S</a></h1>
 <nav id = "nav">
 <ul>
-<li><a href = "test.html">Home</a></li>
+    <li><a onclick="customLoginF(1)">(테스트) 모든피드</a></li>
+    <li><a onclick="customLoginF(2)">처음 방문</a></li> 
 </ul>
 </nav>
 </header>
@@ -263,7 +341,7 @@ function post_to_url(input)
 </li>
 </ul>
 <br><br><br>
-<input type = "IMAGE" src = "images/facebookLogin.png" onclick = "customLoginF()" style = "width:300px">
+<input type = "IMAGE" src = "images/facebookLogin.png" onclick = "customLoginF(0)" style = "width:300px">
 <div id="fbImage"></div>
 </section>
 
