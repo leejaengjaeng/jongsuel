@@ -8,11 +8,18 @@ router.get('/', function(req, res, next) {
     res.send('Hello');
     //res.render('index', { });
 });
+/* 관리자 에게 정보보여주기 */
+router.post('/getInform',function(req,res,next)
+{
+
+});
+
+/* 사용자 정보 받기 */
 router.post('/', function(req,res,next){
     var userId = req.body.userid;
-    var energy =  " energy :" + req.body.energy;
-    var feeling =  " emotion : "+req.body.emotion;
-    var imgUrl = "imgUrl : "+req.body.imgUrl;
+    var energy = req.body.energy;
+    var feeling = req.body.emotion;
+    var imgUrl = req.body.imgUrl;
     var date = req.body.date;
     var uname = req.body.uname;
     var text="";
@@ -67,7 +74,7 @@ router.post('/', function(req,res,next){
         {
             for(var i=0;i<n;i++)
             {
-                insertQuery += '(\'\','+userId+',\''+result[i]+'\'),';   
+                insertQuery += '(\'\','+userId+',\''+result[i]+'\',\''+date+'\'),';   
             }
             //마지막 , 제거
             insertQuery = insertQuery.slice(0,-1);
@@ -106,9 +113,10 @@ router.post('/', function(req,res,next){
                     }
                     else continue;
                 }
+                console.log(result);
                 resolve(t);
             });
-        //printT() 같은 형식이 아니라는거 주의!
+        //insertWord() 같은 형식이 아니라는거 주의!
         }).then(insertWords);
     }
     dbConn.query('select uid from user where uid = ?',[userId],function(err,rows){
@@ -138,7 +146,7 @@ router.post('/', function(req,res,next){
                     console.log('user insert done..');
                  }
             });
-            dbConn.query('INSERT INTO emotion values(\'\',?,?,?)',[uname,energy,feeling],function(err,rows)
+            dbConn.query('INSERT INTO emotion values(\'\',?,?,?,?)',[uname,energy,feeling,date],function(err,rows)
             {
                 if(err)
                 {
@@ -157,7 +165,7 @@ router.post('/', function(req,res,next){
         else
         {
             console.log('디비에 값 있음');
-            dbConn.query('INSERT INTO emotion values(?,?,?,?)',['',userId,energy,feeling],function(err,rows)
+            dbConn.query('INSERT INTO emotion values(?,?,?,?,?)',['',userId,energy,feeling,date],function(err,rows)
             {
                 if(err)
                 {

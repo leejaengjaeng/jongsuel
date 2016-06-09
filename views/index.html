@@ -16,14 +16,147 @@
     <script src = "javascripts/skel.min.js"></script>
     <script src = "javascripts/skel-layers.min.js"></script>
     <script src = "javascripts/init.js"></script>
-    <!--noscript-->
     <link rel = "stylesheet" type = "text/css" href = "css/skel.css"/>
     <link rel = "stylesheet" type = "text/css" href = "css/style.css"/>
     <link rel = "stylesheet" type = "text/css" href = "css/style-xlarge.css"/>
-    <!--/noscript-->
+    <style>
+        ul.condition{width:100%; list-style:none; background:none; padding:0 0; margin-bottom:5%; }
+        ul.condition > li{padding:0 0;}
+        ul.condition > li:first-child{clear:both; margin:0 auto; width:30%}
+        ul.condition > li:first-child > img{width:100%;}
+
+        ul.condition > li:nth-child(2){clear:both; width:100%; margin:0 auto !important; height:50px; list-style:none;}
+        ul.condition > li:nth-child(2) > ul.progress_bar_bg{width:80%; height:50px; list-style:none; margin:0 auto; padding:0 0}
+        ul.condition > li:nth-child(2) > ul.progress_bar_bg > li{float:left; height:50px; padding:0 0;}
+        ul.condition > li:nth-child(2) > ul.progress_bar_bg > li{
+        width:100%;
+        height:50px;
+        background-color:#222;
+        padding-left:10px;
+        padding-right:10px;
+        border-radius:10px 10px;            
+    }   
+ul.condition > li:nth-child(2) > ul.progress_bar_bg > li > ul.progress_bar{
+    width:100%;
+    height:30px;
+    margin-top:10px;
+    list-style:none;
+    padding:0 0;
+    cursor:pointer;
+}
+ul.condition > li:nth-child(2) > ul.progress_bar_bg > li > ul.progress_bar > li{
+    width:50%;
+    height:30px;
+    padding:0 0;
+    border-radius:8px 8px;
+    background: linear-gradient(to bottom, #89f600 0%,#3ff100 100%);
+}
+
+ul.feelings{width:100%; list-style:none; background:none; padding:0 0;}
+ul.feelings > li{padding:0 0;}
+ul.feelings > li:first-child{clear:both; margin:0 auto;margin-bottom:3%;  width:30%}
+ul.feelings > li:first-child > img{width:100%;}
+ul.feelings > li:nth-child(2){width:100%; clear:both; padding:0 0; margin:0 auto;}
+ul.emotion{width:60%; list-style:none; margin:0 auto; padding:0 0; clear:both;}
+ul.emotion > li{width:19%; margin-right:1%; padding:0 0; float:left;}
+ul.emotion > li:nth-child(5){margin:0 0;}
+ul.emotion > li > a{width:100%; display:inline-block; cursor:pointer; overflow:hidden;}
+ul.emotion > li:nth-child(1) > a{background:url("images/feel1.png") no-repeat;}
+ul.emotion > li:nth-child(2) > a{background:url("images/feel2.png") no-repeat;}
+ul.emotion > li:nth-child(3) > a{background:url("images/feel3.png") no-repeat;}
+ul.emotion > li:nth-child(4) > a{background:url("images/feel4.png") no-repeat;}
+ul.emotion > li:nth-child(5) > a{background:url("images/feel5.png") no-repeat;}
+
+</style>
 </head>
 <body class = "landing">
 <script>
+//progess & button
+/* 표정 롤오버,클릭,롤아웃 조정     
+     * feel input hidden 값 받기    */
+var chk = [0,0,0,0,0];
+var feeling;
+var percent;
+function over_click(id,sel){
+    if(sel==0){ //롤오버시
+        for(i=0; i<5; i++){
+            if(chk[i]!=2){
+                if(i==(id-1)){ 
+                    chk[i] = 1;
+                }else{ 
+                    chk[i] = 0;
+                }
+            }
+        }
+    }else if(sel==1){ //롤아웃시
+        for(i=0; i<5; i++){
+            if(chk[i]!=2) chk[i] = 0;
+        }
+    }else{ //클릭시
+        for(i=0; i<5; i++){
+            if(i==(id-1)){ 
+                if(chk[i] == 2) chk[i] = 0; else chk[i] = 2;
+            }else{ 
+                chk[i] = 0;
+            }
+        }
+
+        $('#feel').val(id);
+        feeling = id;
+    }
+
+    var emotion_width = $('a#feel1').width();
+    for(i=1; i<=5; i++) 
+        if(chk[i-1] == 0)
+            $('a#feel'+i).css('background-position', '0px 0px');
+        else if(chk[i-1] == 1)
+            $('a#feel'+i).css('background-position', '0px -'+emotion_width+'px');
+        else if(chk[i-1] == 2){
+            //$('a#feel'+i).css('background', 'url(\'../public/images/feel'+i+'_click.png\') no-repeat');
+            //$('a#feel'+i).css('background-size', 'cover;');
+        }
+
+}
+
+function resize(){
+
+    var emotion_width = $('ul.emotion > li:nth-child(1) > a').width();
+
+    $('ul.emotion > li:nth-child(1) > a').parent().css('height',  emotion_width+'px');
+    $('ul.emotion > li:nth-child(1) > a').parent().parent().css('height',  emotion_width+'px');
+    for(var i=1; i<=5; i++){
+        $('ul.emotion > li:nth-child('+i+') > a').css('height', (emotion_width)+'px');
+        $('a#feel'+i).css('background-size','cover');
+    }
+
+    $("ul.progress_bar").click(function(event){
+            var $x=event.screenX;
+            var $width = $(this).width();
+            var $margin_left = $(this).parent().parent().css('marginLeft');
+            $margin_left = $margin_left.substring(0,($margin_left.length-2));
+            $margin_left = parseInt($margin_left)+10;
+            var $percentage = Math.round((($x-$margin_left)/($(this).width() - 20))*100);
+            $(this).children('li').animate({width: ($percentage)+'%'}, 400);
+            $('input.condition').val($percentage);
+            percent = $percentage;
+            });
+  
+
+    for(i=1; i<5; i++){
+        var div = $('ul.emotion > li:nth-child('+i+') > div');
+        div.css('background-position', '0 '+div.width()+'px');
+    }
+
+}
+$(document).ready(function(){
+        resize();
+        });
+$(window).resize(function(){
+        resize();
+        });
+
+//progess & button end
+
 // init facebookAPI
 window.fbAsyncInit = function() {    
     FB.init({
@@ -82,7 +215,9 @@ function check(response,flag)
 }
 //time Setting for get feed
 //..? 여기에 넣으면 근데 하루에 한번씩 서버 다시 켜야되나 
-  var today = new Date();
+    var today = new Date();
+    var tmp = today.getDate();
+    today.setDate(tmp+1);
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
     var yyyy = today.getFullYear();
@@ -94,9 +229,9 @@ function check(response,flag)
     } 
     today = yyyy+'-'+mm+'-'+dd;
     
-    var yesterDay = new Date(dd+'/'+mm+'/'+yyyy);
+    var yesterDay = new Date(mm+'/'+dd+'/'+yyyy);
     var dayOfMonth = yesterDay.getDate();
-    yesterDay.setDate(ydd-1);
+    yesterDay.setDate(dayOfMonth-1);
     var ydd = yesterDay.getDate();
     var ymm = yesterDay.getMonth()+1;
     var yyyyy = yesterDay.getFullYear();
@@ -109,7 +244,7 @@ function check(response,flag)
     yesterDay = yyyyy+'-'+ymm+'-'+ydd;
 
     //편의를 위해 4달(약 120일 로 설정)
-    var before100Days = new Date(dd+'/'+mm+'/'+yyyy);
+    var before100Days = new Date(mm+'/'+dd+'/'+yyyy);
     var monthOfYear = before100Days.getMonth();
     before100Days.setMonth(monthOfYear-4);
     var dd100 = before100Days.getDate();
@@ -121,15 +256,15 @@ function check(response,flag)
     if(mm100<10) {    
         mm100='0'+mm100
     } 
-   before100Days = yy100+'-'+mm100+'-'+dd100;
+    before100Days = yy100+'-'+mm100+'-'+dd100;
    
 
 //show user's feed
 function testShow(myAToken,userid,flag)
 {
    
-    var energy = 84;
-    var emotion = 2;
+    var energy = percent;
+    var emotion = feeling;
     var uid = userid;
      
     //&since=2011-07-01&until=2012-08-08&access_token=ACCESSTOKEN&limit=100
@@ -155,7 +290,7 @@ function testShow(myAToken,userid,flag)
                     resolve(uname);
                  });
             });
-            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
+            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
             Promise.all([getImg,getUname,args]).then(post_to_url);      
             FB.logout();
             alert('전체 피드 전송되었습니다');
@@ -186,7 +321,7 @@ function testShow(myAToken,userid,flag)
             var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
             Promise.all([getImg,getUname,args]).then(post_to_url);      
             FB.logout();
-            alert('오늘 피드 전송되었습니다');
+            alert(yesterDay+"~"+today+':오늘 피드 전송되었습니다\n'+texts+"\nenergy , emotion :" +energy+","+emotion);
         });
     } 
     else if(flag==2)//100일(4달치) 피드
@@ -211,10 +346,10 @@ function testShow(myAToken,userid,flag)
                     resolve(uname);
                  });
             });
-            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts}]
+            var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
             Promise.all([getImg,getUname,args]).then(post_to_url);      
             FB.logout();
-            alert('최근 피드 전송되었습니다');
+            alert(today+'] 최근 피드 전송되었습니다\n'+texts);
         });
     }
     else
@@ -303,8 +438,6 @@ function post_to_url(input)
 
 
 
-
-
 <!--Header-->
 
 <header id = "header">
@@ -319,30 +452,46 @@ function post_to_url(input)
 
 <!--Banner-->
 <section id = "banner">
-<h2>오늘의 상태는 어떠세요 ? </h2>
-<br>
-
-<h2>★★★★★★☆☆☆</h2>
-<ul class = "actions">
-<li>
-<img src = "images/veryBad.png" onclick = "" style = "width:130px">
-</li>
-<li>
-<img src = "images/bad.png" style = "width:130px">
-</li>
-<li>
-<img  src = "images/soso.png"  style = "width:130px">
-</li>
-<li>
-<img  src = "images/good.png" style = "width:130px">
-</li>
-<li>
-<img src = "images/veryGood.png" style = "width:130px">
-</li>
-</ul>
+    <form id="form1" action="" method="post">
+        <ul class="condition">
+            <li><img src="images/condition_txt.png" /></li>
+            <li>
+            <ul class="progress_bar_bg">
+                <li>
+                <ul class="progress_bar">
+                    <li></li>
+                </ul>
+                <input class="condition" type="hidden" name="condition">
+                </li>
+            </ul>
+            </li>
+        </ul>
+        <ul class="feelings">
+            <li><img src="images/feelings_txt.png" /></li>
+            <li>
+            <ul class = "emotion">
+                <li>
+                <a id="feel1" onMouseOver="javascript:over_click(1,0)" onMouseOut="javascript:over_click(1,1)" onClick="javascript:over_click(1,2)"></a>
+                </li>
+                <li>
+                <a id="feel2" onMouseOver="javascript:over_click(2,0)" onMouseOut="javascript:over_click(2,1)" onClick="javascript:over_click(2,2)"></a>
+                </li>
+                <li>
+                <a id="feel3" onMouseOver="javascript:over_click(3,0)" onMouseOut="javascript:over_click(3,1)" onClick="javascript:over_click(3,2)"></a>
+                </li>
+                <li>
+                <a id="feel4" onMouseOver="javascript:over_click(4,0)" onMouseOut="javascript:over_click(4,1)" onClick="javascript:over_click(4,2)"></a>
+                </li>
+                <li>
+                <a id="feel5" onMouseOver="javascript:over_click(5,0)" onMouseOut="javascript:over_click(5,1)" onClick="javascript:over_click(5,2)"></a>
+                </li>
+            </ul>
+            </li>
+        </ul>
+        <input type="hidden" name="feel" id="feel" value="1" />
+</form>
 <br><br><br>
 <input type = "IMAGE" src = "images/facebookLogin.png" onclick = "customLoginF(0)" style = "width:300px">
-<div id="fbImage"></div>
 </section>
 
 <!--One-->
