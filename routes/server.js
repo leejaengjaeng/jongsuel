@@ -2,18 +2,71 @@ var express = require('express');
 var router = express.Router();
 var dbConn = require('../lib/dbConnection.js');
 var mecab = require('mecab-ffi');
+var url = require('url');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.send('Hello');
     //res.render('index', { });
 });
-/* 관리자 에게 정보보여주기 */
-router.post('/getInform',function(req,res,next)
+/*class에 속한 사람들의 uid 보내주기 */
+router.get('/getPeoplesInClass', function(req,res,next)
 {
-
+    //var cid = req.param.cid;
+    var reqUrl = url.parse(req.url,true).query;
+    var cid = reqUrl.cid;
+    dbConn.query('select uid from user where cid = ?',[cid],function(err,rows){
+        if(err){
+            console.log('get Peoples in Class Err');
+            console.log("cid : "+cid);
+            console.log(err);
+            return next(err);
+        }
+        else{
+            res.writeHead(200,{'Content-Type':'application/json'});
+            //rows[0].uid 로 써내서 씀
+            res.end(JSON.stringify(rows));
+        }
+    });
 });
 
+/* 관리자 에게 정보보여주기 */
+router.get('/getInfomAboutPerson',function(req,res,next)
+{
+    var reqUrl = url.parse(req.url,true).query;
+    var uid = reqUrl.uid;
+    dbConn.query('select edate,energy,feeling from emotion where uid =? order by edate limit 5',[uid],function(err,rows){
+        if(err){
+            console.log('get Inform err');
+            console.log('uid :'+uid);
+            console.log(err);
+            return(err);
+        }
+        else{
+            res.writeHead(200,{'Content-Type':'application/json'});
+            res.end(JSON.stringify(rows));
+        }
+    });
+});
+
+/* 사람별 top10개 키워드 보내주기 */
+router.get('/getPersonsWord',function(req,res,next)
+{
+    var reqUrl = url.parse(req.url,true).query;
+    var uid = reqUrl.uid;
+    dbConn.query('select word,count(*) as cnt from word where uid = ? group by uid, word order by count(*) desc limit 10  ',[uid],function(err,rows){
+        if(err){
+            console.log('get Inform err');
+            console.log('uid :'+uid);
+            console.log(err);
+            return(err);
+        }
+        else{
+            res.writeHead(200,{'Content-Type':'application/json'});
+            res.end(JSON.stringify(rows));
+        }
+    });
+});
 /* 사용자 정보 받기 */
 router.post('/', function(req,res,next){
     var userId = req.body.userid;
@@ -24,7 +77,10 @@ router.post('/', function(req,res,next){
     var uname = req.body.uname;
     var text="";
     var realText="";
-    console.log(req.body.messages);
+
+    if(energy == 'undefined') energy = 0;
+    if(feeling == 'undefined') feeling = 1;
+
 
     //null 체크를 이렇게 밖에못하는 자신을 탓해봅시다
     if(req.body.messages == "undefined")
