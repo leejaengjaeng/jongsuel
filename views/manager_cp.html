@@ -3,15 +3,16 @@
 <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
 <head>
 	<link href="css/admin_style.css" rel="stylesheet" />
-    
+    <style>
+        ul.graph_area{overflow:hidden}
+        li.key{letter-spacing:-0.1em}
+    </style>
     <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
-
-    
-<script>
+    <script>
 
     var URL = window.location.search.substring(1);
     URL = URL.split('=');
-    var student_num = 6;
+    var student_num = URL[1];
     var student_guage = new Array(student_num);
 
     var test_val =
@@ -21,6 +22,7 @@
         [99,70,80,90,99],[99,70,80,90,99],[99,70,80,90,80]
     ];   
     
+   
     function resize(){
 		
 			//폰트크기 설정
@@ -39,33 +41,36 @@
 			jQuery('ul.data > li:last-child').css('line-height', name_height+'px');
             jQuery('li.key').css('line-height', name_height+'px');
 
-			//그래프 아이콘 크기설정			
+//			//그래프 아이콘 크기설정			
 			var graph_width = $('.graph_area').width();
 			$('.graph_area > li > img').css('width', graph_width*(30/384)+'px');
 		
 			for(var j=1; j<=student_num; j++){ //학생 수만큼 루프
-				student_guage[j-1] = new Array(5); //기분 갯수 5개 배열 생성
+			student_guage[j-1] = new Array(5); //기분 갯수 5개 배열 생성
 				var parent_width = $('ul.data > li:nth-child(4) > ul.graph_area').width();
-				for(var i=1; i<=5; i++){
-					student_guage[j-1] = test_val[j-1]; //테스트 배열값 대입
+
+                for(var i=5; i>=1; i--){
+                    student_guage[j-1] = test_val[j-1]; //테스트 배열값 대입
                     var this_height = $('.graph_area > li:nth-child('+i+')').height();
 					var parent_height = $('ul.data > li:nth-child(4) > ul.graph_area').height()-this_height;
-					var calc_height = 100-student_guage[j-1][i-1]; //각 기분마다의 margin-top% 계산
-					/* 각 기분 애니메이트 */
-					$('ul.record_area > li:nth-child('+j+') > ul.data > li > ul.graph_area > li:nth-child('+i+')').animate({marginTop: ((parent_height/parent_width)*calc_height)+"%"},1000);
-					//$('ul.record_area > li:nth-child('+j+') > ul.data > li > ul.graph_area > li:nth-child('+i+')').css('margin-top', ((parent_height/parent_width)*calc_height)+'%');
+                    calc_height = 100-student_guage[j-1][i-1];
+
+                    //					/* 각 기분 애니메이트 */
+		//			$('ul.record_area > li:nth-child('+j+') > ul.data > li > ul.graph_area > li:nth-child('+i+')').animate({marginTop: ((parent_height/parent_width)*calc_height)+"%"},1000);
+		//			$('ul.record_area > li:nth-child('+j+') > ul.data > li > ul.graph_area > li:nth-child('+i+')').css('margin-top', ((parent_height/parent_width)*calc_height)+'%');
 				}
 			}
 
 		}
 	
         jQuery(document).ready(function(){
-//            setTimeout(function(){resize()},350);
+            
+            setTimeout(function(){resize()},150);
         });
 
 		/* 화면 크기 바뀔때마다 실행 */
 		jQuery(window).resize(function(){
-			resize();
+		    resize();
 		});
 	</script>
    <title> Admin Page</title>
@@ -95,12 +100,12 @@
     <script>
 
     $.get("/server/getPeoplesInClass?cid=1", function(uids) { 
-//            var url = window.location.search.substring(1);
-//            if(url=="") document.location.href='/manager?stu_cnt='+uids.length;
+            var url = window.location.search.substring(1);
+            if(url=="") document.location.href='/manager?stu_cnt='+uids.length;
             
-            uid_return(uids);
+           uid_return(uids);
     });   
- 
+
     function uid_return(uids){
         var str;
         for(var i = 0; i<uids.length; i++){
@@ -113,22 +118,18 @@
                  str += "<li><input type=button value=\"Detail\" onclick=\"document.location.href='./details?user_id="+uids[i].uid+"';\"></li>";
                 str += "</ul>";
                 str += "</li>";
-                /*
-                $.get("/server/infom_name_img?uid="+uids[i].uid, function(info){
-         
-                });*/
         }
 
         $('.record_area').html(str.substr(9));
 
         for(var i=0; i<uids.length; i++){
-          //  get_keyword(uids[i].uid);
-          //  get_graph(uids[i].uid);  
+            get_keyword(uids[i].uid);
+            get_graph(uids[i].uid,i);  
         }
     }
-
+ 
     function get_keyword(uid){
-        $.get("/server/getPersonsWord?uid="+uid+", function(words){
+        $.get("/server/getPersonsWord?uid="+uid, function(words){
            var section = "."+uid+"_keyword";
            var str;
            for(i=0; i<4; i++){
@@ -141,33 +142,64 @@
         });
     }
 
-    function get_graph(uid){
+    function get_graph(uid,unum){
         var guage = [];
         $.get("/server/getInfomAboutPerson?uid="+uid, function(info){
              var section = "."+uid+"_graph ul.graph_area";             
              var str;
-             for(i=0; i<5; i++){
+             var len = info.length;
+             for(i=5; i>=1; i--){
+             if(len>(i-1))
+             {
                 str += "<li>";
-                    str += "<img src=\"images/graph_face_"+info[i].feeling+".png\">";
+                    str += "<img src=\"images/graph_face_"+info[i-1].feeling+".png\">";
                 str += "</li>";
-              ;
+                guage[i-1] = info[i-1].energy;
              }
+             else
+             {
+                 str += "<li>";
+                    str += "<img src=\"images/graph_face_0.png\">";
+                str += "</li>";
+                guage[i-1] = 10;
+            
+             }
+            }
              $(section).html(str.substr(9));
+        
         });
-
         var sect = "."+uid+"_graph ul.graph_area";
-  /*      setTimeout(function(){
+        setTimeout(function(){
+             
                 if($(sect).children().size()==0)
                     $(sect).html(
-                        "<li><img src=\"images/graph_face_3.png\"></li>"+
-                        "<li><img src=\"images/graph_face_3.png\"></li>"+
-                        "<li><img src=\"images/graph_face_3.png\"></li>"+
-                        "<li><img src=\"images/graph_face_3.png\"></li>"+
-                        "<li><img src=\"images/graph_face_3.png\"></li>"
-                    );                         
-        }, 300);
-    */    
-    }
+                        "<li><img src=\"images/graph_face_0.png\"></li>"+
+                        "<li><img src=\"images/graph_face_0.png\"></li>"+
+                        "<li><img src=\"images/graph_face_0.png\"></li>"+
+                        "<li><img src=\"images/graph_face_0.png\"></li>"+
+                        "<li><img src=\"images/graph_face_0.png\"></li>"
+                    );
+                var graph_width = $(sect).width();
+                $(sect + " li img").css('width', graph_width*(30/386)*'px');
+                var this_height = $(sect).children().height();
+                var parent_height = $(sect).height() - this_height;
+                for(var i = 5; i >= 1; i--){
+                    if(guage[i-1] > 0 && guage[i-1] <= 100){
+                    }else{
+                        guage[i-1] = 0;
+                    }
+                    var calc_height = 100-guage[i-1];
+                    guage[i-1] = ((parent_height/$(sect).width())*0.9)*calc_height;
+                    console.log("gauge["+(i-1)+"]"+guage[i-1]);
+                    $(sect+" li:nth-child("+i+")").animate(
+                        {marginTop: guage[i-1]+"%"},
+                        1000
+                    );
+                }
+                               
+          }, 500);
+  
+}
 </script>   
    </ul>      
  </div>

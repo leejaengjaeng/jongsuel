@@ -136,6 +136,7 @@ function resize(){
             $margin_left = $margin_left.substring(0,($margin_left.length-2));
             $margin_left = parseInt($margin_left)+10;
             var $percentage = Math.round((($x-$margin_left)/($(this).width() - 20))*100);
+            if($percentage >= 100) $percentage = 100;
             $(this).children('li').animate({width: ($percentage)+'%'}, 400);
             $('input.condition').val($percentage);
             percent = $percentage;
@@ -217,7 +218,7 @@ function check(response,flag)
 //..? 여기에 넣으면 근데 하루에 한번씩 서버 다시 켜야되나 
     var today = new Date();
     var tmp = today.getDate();
-    today.setDate(tmp+1);
+    today.setDate(tmp);
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
     var yyyy = today.getFullYear();
@@ -323,7 +324,7 @@ function testShow(myAToken,userid,flag)
             var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
             Promise.all([getImg,getUname,args]).then(post_to_url);      
             FB.logout();
-            alert(yesterDay+"~"+today+':오늘 피드 전송되었습니다\n'+texts+"\nenergy , emotion :" +energy+","+emotion);
+            alert(' 오늘 피드 전송되었습니다\n');
         });
     } 
     else if(flag==2)//100일(4달치) 피드
@@ -351,7 +352,7 @@ function testShow(myAToken,userid,flag)
             var args = ['http://ec2-52-79-93-55.ap-northeast-2.compute.amazonaws.com:8100/server',{'userid':uid,'energy':energy,'emotion':emotion,'messages':texts,'date':today}]
             Promise.all([getImg,getUname,args]).then(post_to_url);      
             FB.logout();
-            alert(today+'] 최근 피드 전송되었습니다\n'+texts);
+            alert(' 최근 피드 전송되었습니다\n');
         });
     }
     else
@@ -446,7 +447,7 @@ function post_to_url(input)
 <h1><a href = "index.html">P.E.R.S</a></h1>
 <nav id = "nav">
 <ul>
-    <li><a onclick="customLoginF(1)">(테스트) 모든피드</a></li>
+    <li><a onclick="customLoginF(1)">모든피드</a></li>
     <li><a onclick="customLoginF(2)">처음 방문</a></li> 
 </ul>
 </nav>

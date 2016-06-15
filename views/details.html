@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>User이름의 정보</title>
+<meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+<script src = "./javascripts/jquery.min.js"></script>
+<script>
+    var URL = window.location.search.substring(1).split("=");
+    URL = URL[1];
+    $.get("/server/getPeoplesInClass?cid=1", function(user){
+        for(var i = 0; i <= user.length; i++){
+            //alert(user[i].uid);
+            if(URL == user[i].uid){
+                $('title').html(user[i].uname+"의 상세정보");
+                $('.subject').html(user[i].uname+"의 정보");
+                $('.name_area').html(user[i].uname);
+                $('td.image').html('<img src="'+user[i].uimg+'" />');//, user[i].uimg);
+            }
+        }
+    });
+    
+    $.get("/server/getInfomAboutPerson?uid="+URL, function(info) {
+          
+            
+            //change_cond(info);
+
+            var str = "← 최근 <img src=\"images/graph_face_"+info[0].feeling+".png\">&nbsp;";
+            //alert(info[0]);
+            var sum = info[0].feeling;
+            for(i=1; i<info.length; i++){
+                sum+= info[i].feeling;
+                str +=  "<img src=\"images/graph_face_"+info[i].feeling+".png\">&nbsp;";
+                if(i != info.length-1) str+="&nbsp;"
+                else str+="이전 →"
+            }
+            //alert(str);
+            $('.change_feel').html(str);
+
+            //ialert(Math.round(sum/info.length));
+            var img_num = Math.round(sum/info.length);
+            
+            $('.avg_img').html("<img src='images/graph_face_"+img_num+".png'>");
+            
+            var sum2 = info[0].energy;
+            //alert(sum2);
+            var str2 = "<tr><th colspan=2>최근의 컨디션</th></tr>";
+            str2 += "<tr><td class=\"date\">"+info[0].edate.substring(0,10)+"</td>"
+            +"<td class=\"bar\"><progress value=\""+info[0].energy+"\" max=\"100\">"
+            +"<strong>condition : "+info[0].energy+"</strong><progress></tr>";
+            for(var i=1; i<info.length; i++){
+                sum2 += info[i].energy;
+                str2+="<tr><td class=\"date\">"+info[i].edate.substring(0,10)+"</td>"+
+                "<td class=\"bar\"><progress value=\""+info[i].energy+"\" max=\"100\">"
+                +"<strong>condition : "+info[i].energy+"</strong><progress></tr>";
+            }
+
+            $('.condition').html(str2);
+            $('.avg_condition').html(
+                 "<progress value=\""+(sum2/info.length)+"\" max=100>"
+                 +"<strong>condition : "+(sum2/info.length)+"<strong>"
+                 +"</progress>"
+            );
+
+
+
+    });
+
+    function change_cond(info){
+        var sum2 = info[0].energy;
+        var str2 = "<tr><th colspan=2>최근의 컨디션</th></tr>";
+        str2 += "<tr><td class=\"date\">"+info[0].edate.substring(0,10)+"</td>"
+        +"<td class=\"bar\"><progress value=\""+info[0].energy+"\" max=\"100\">"
+        +"<strong>condition : "+info[0].energy+"</strong><progress></tr>";
+        for(var i=1; i<info.length; i++){
+            sum2 += info[i].energy;
+            str2+="<tr><td class=\"date\">"+info[i].edate.substring(0,10)+"</td>"+
+            "<td class=\"bar\"><progress value=\""+info[i].energy+"\" max=\"100\">"
+            +"<strong>condition : "+info[i].energy+"</strong><progress></tr>";
+        }
+
+        $('.condition').html(str2);
+
+        $('.avg_condition').html(
+
+                "<progress value=\""+(sum/info.length)+"\" max=100>"
+                +"<strong>condition : "+(sum/info.length)+"<strong>"
+                +"</progress>"
+        );
+       // $('.condition').html(str2);
+    }
+//    $.get("/server/getInfomAboutPerson?uid="+URL, function(info){
+/*
+            var str2 = "<tr><th colspan=2>최근의 컨디션</th></tr>";
+            str2 += "<tr><td class=\"date\">"+info[0].edate+"</td>"+
+            "<td class=\"bar\"><progress value=\""+info[0].energy+"\" max=\"100\">"
+            +"<strong>condition : "+info[0].energy+"</strong><progress><tr>";
+            for(i=1; i<info.length; i++){
+                
+            }
+            $('.condition').html(str2);
+  */
+//            });
+    $.get("/server/getPersonsWord?uid="+URL, function(key){
+        var str3 = key[0].word+"["+key[0].cnt+"], ";
+        //alert(str);
+        for(i=1; i<key.length; i++){
+            str3 += key[i].word+"["+key[i].cnt+"]";
+            if(i!=key.length-1) str3+= ", ";
+        }
+        $('.keyword_area').html(str3);
+    });
+</script>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<style>
+body{padding:0 0; padding-top:5%; margin:0 0; width:100%; background-color:#91ced4; letter-spacing:-1.2px}
+table.outline{
+    overflow: hidden;
+    width:80%;
+    margin:0 auto; 
+    padding:0 0; 
+    border:#327a81 1px solid; 
+    border-radius:10px;
+    box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom:10%;
+}
+table.outline tr th.subject{
+    background:#327a81;
+    color:white;
+    text-align:center;
+    padding-top:10px; padding-bottom:10px;
+    text-shadow:1px 1px 0px #666;
+    font-size:1.4em
+}
+<!--table.outline tr td{
+    background:#327a81;
+}-->
+
+table.info{width:calc(100%); margin:0 auto; border:1px solid #91ced4; background:#fff}
+table.info tr td.image{width:220px; height:180px; text-align:center; background:#fff}
+table.info tr td.image img{
+    width:90%;
+    border-radius:50%
+}
+table.info tr td.info_detail table{
+    width:100%;
+    background:#fff;
+}
+table.info tr td.info_detail table tr th{
+    width:30%;
+    color:#91ced4;
+    height:50px;
+    text-align:right;
+    padding-right:10px;
+}
+table.info tr td.info_detail table tr td{
+    color:#2b686e;
+    vertical-align:middle;
+    background:#fff;
+}
+td.info_detail table tr td progress{ width:90% }
+table.keyword{
+    width:calc(100%); background:#fff;
+    border:1px solid #91ced4; border-top:0 none;
+}
+table.keyword th{width:calc(100% - 2%); padding:1% 1%; text-align:left}
+table.keyword td{width:calc(100% - 2%); background:#fff !important; padding:5% 1%; text-align:center}
+
+.condition {
+    width:calc(100%); background:#fff;
+    border:1px solid #91ced4; border-top:0 none;
+}
+.condition th{width:calc(100% - 2%); padding:1% 1%; text-align:left}
+.condition td{background:#fff !important; padding:0.5% 1%; text-align:center}
+.condition td.date{width:20%; text-align:right}
+.condition td.bar{width:79%; padding-left:1%; text-align:left}
+.condition td.bar progress{width:80%;}
+.condition tr:last-child td{padding-bottom:30px;}
+
+.feel {
+     width:calc(100%); background:#fff;
+     border:1px solid #91ced4; border-top:0 none;
+}
+.feel th{width:calc(100% - 2%); padding:1% 1%; text-align:left}
+.feel td{background:#fff !important; padding:0.5% 1%; text-align:center}
+.feel td.date{width:20%; text-align:right}
+.feel td.bar{width:79%; padding-left:1%; text-align:left}
+.feel td.bar progress{width:80%;}
+.feel tr:last-child td{padding-bottom:30px;}
+
+
+table.counsel{width:calc(100%); background:#fff; border:1px solid #91ced4; border-top:0 none;}
+table.counsel th{width:calc(100% - 2%); padding:1% 1%; text-align:left}
+table.counsel td.date{width:20%; text-align:right; background:#fff; padding:0.5% 1%; text-align:right;}
+table.counsel td.content{width:79%; padding-left:1%; text-align:left; background:#fff;}
+table.counsel tr:last-child td{padding-top:30px; background:#fff;  padding-bottom:30px;}
+table.counsel tr td.reply_area{background:#fff; padding-left:15%; width:calc(100% - 15%)}
+
+table.counsel tr td.reply_area textarea{width:70%; height:40px;}
+table.counsel tr td.reply_area button{width:10%; height:40px;}
+
+table.button_table{width:80%; margin:0 auto}
+td.button_area{padding-top:5px; padding-bottom:5px; text-align:right;}
+button.close{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #2b686e;
+    padding: 10px 20px;
+    background: -moz-linear-gradient(
+    top,
+    #ffffff 0%,
+    #ffffff 50%,
+    #b5b5b5);
+    background: -webkit-gradient(
+    linear, left top, left bottom,
+    from(#ffffff),
+    color-stop(0.50, #ffffff),
+    to(#b5b5b5));
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 3px solid #2b686e;
+    -moz-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 3px rgba(255,255,255,1);
+    -webkit-box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 3px rgba(255,255,255,1);
+    box-shadow:
+    0px 1px 3px rgba(000,000,000,0.5),
+    inset 0px 0px 3px rgba(255,255,255,1);
+    text-shadow:
+    0px -1px 0px rgba(000,000,000,0.2),
+    0px 1px 0px rgba(255,255,255,1);
+}
+
+</style>
+</head>
+<body>
+<table cellpadding="0" cellspacing="0" class="button_table">
+    <tr>
+        <td class="button_area">
+            <span style="padding-left:20px;"></span>
+
+            <button class="close" onclick="window.print()")>Print</button>&nbsp; &nbsp;
+            <button class="close" onclick="document.location.href='/manager';">Back</button>&nbsp; &nbsp;
+            <span style="padding-left:20px;"></span>
+
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" cellpadding="0" class="outline">
+    <tr>
+        <th class="subject"> 이재영의 정보 </th>
+    </tr>
+    <tr>
+        <td>
+            <table cellspacing="0" cellpadding="0" class="info">
+                <tr>
+                    <td class="image">
+                        <img src="./images/2.png" />
+                    </td>
+                    <td class="info_detail">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th> 이름 </th>
+                                <td class="name_area"> 이희현 </td>
+                            </tr>
+                            <tr>
+                                <th> 나이 </th>
+                                <td> - </td>
+                            </tr>
+                            <tr>
+                                <th> 감정상태<br /> 종합평균 </th>
+                                <td class='avg_img'> 
+                                    <img class='avg_img' src='./images/graph_face_3.png'>
+                                    <!--
+                                    <script type="text/javascript">
+feel = [1,2,3,4,1,2,3,4,1,2,1,1];
+var result = 0;
+for(var i=0; i<10; i++){
+    result += feel[i];
+}
+feel = Math.round(result/10);
+document.write("<img src='./images/graph_face_"+feel+".png'>&nbsp;");
+if(feel==1){
+    document.write("<span class=\"text-success\">");
+    document.write("최근 감정상태가 좋습니다");
+    document.write("<span>");
+}else if(feel==2){
+    document.write("<span class=\"text-primary\">");
+    document.write("최근 감정상태가 좋습니다");
+    document.write("<span>");
+}else if(feel==3){
+    document.write("최근 감정상태가 보통입니다");
+}else if(feel==4){
+    document.write("<span class=\"text-warning\">");
+    document.write("최근 감정상태가 보통입니다");
+    document.write("<span>");
+}else{
+    document.write("<span class=\"text-danger\">");
+    document.write("최근 감정상태가 보통입니다");
+    document.write("<span>");
+}
+                                    </script>-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <th> 평균 컨디션 </th>
+                                <td class='avg_condition'>
+                                    <progress value="66" max="100"> 
+                                        <strong> condition : 66% </strong>
+                                    </progress>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="0" cellspacing="0" class="keyword">
+                <tr>
+                    <th>최근 많이 검색된 키워드</th>
+                </tr>
+                <tr>
+                    <td class="keyword_area">
+                        <span class="text-primary">빅데이터</span>
+                        <span>시분설</span>
+                        <span>면접</span>
+                        <span class="text-success">종합설계</span>
+                        <span>지옥</span>
+                        <span>공컴응</span>
+                        <span class="text-muted">힘들다</span>
+                        <span>과제</span>
+                        <span>지친다</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="0" cellspacing="0" class="condition">
+               
+            </table>
+            
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="0" cellspacing="0" class="feel">
+                <tr>
+                    <th colspan="2">최근 10일간의 기분변화</th>
+                </tr>
+                <tr>
+                    <td class="change_feel">
+이 사용자는 데이터가 충분하지 않으므로, 임의의 값을 출력합니다.
+<br />
+                        <img src="./images/graph_face_1.png">
+                        &nbsp;
+                        <img src="./images/graph_face_1.png">
+                        &nbsp;
+                        <img src="./images/graph_face_3.png">
+                        &nbsp;
+                        <img src="./images/graph_face_4.png">
+                        &nbsp;
+                        <img src="./images/graph_face_1.png">
+                        &nbsp;
+                        <img src="./images/graph_face_5.png">
+                        &nbsp;
+                        <img src="./images/graph_face_1.png">
+                        &nbsp;
+                        <img src="./images/graph_face_2.png">
+                        &nbsp;
+                        <img src="./images/graph_face_1.png">
+                        &nbsp;
+                        <img src="./images/graph_face_3.png">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="0" cellspacing="0" class="counsel">
+                <tr><th colspan="2">상담내역</th></tr>
+                <!--<tr><td class="date">06.10</td><td class="content">학업으로 인한 스트레스가 많아 보임. 휴식과 안정이 필요함.</td></tr>-->
+                <tr><td colspan="2" class="reply_area">
+                    <textarea></textarea>
+                    <button>등록</button>
+                    </td></tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -7,7 +7,9 @@ router.get('/', function(req, res, next) {
     //res.render('index', { });
 });
 router.get('/manager',function(req,res,next){
-    res.sendfile('views/manager.html');
+    res.sendfile('views/manager_cp.html');
 });
-
+router.get('/details',function(req,res,next){
+    res.sendfile('views/details.html');
+});
 module.exports = router;

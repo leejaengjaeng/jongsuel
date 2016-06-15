@@ -1,0 +1,102 @@
+
+> nodeServer@0.0.0 start /home/ubuntu/VirtualEnvs/js_Node/nodeServer
+> node ./bin/www
+
+Fri, 10 Jun 2016 07:45:12 GMT express deprecated res.sendfile: Use res.sendFile instead at routes/index.js:6:9
+[0mGET / [32m200 [0m11.832 ms - 19087[0m
+[0mGET /javascripts/jquery.min.js [36m304 [0m1.641 ms - -[0m
+[0mGET /css/skel.css [36m304 [0m0.596 ms - -[0m
+[0mGET /css/style.css [36m304 [0m0.355 ms - -[0m
+[0mGET /css/style-xlarge.css [36m304 [0m0.208 ms - -[0m
+[0mGET /javascripts/skel.min.js [36m304 [0m0.180 ms - -[0m
+[0mGET /javascripts/skel-layers.min.js [36m304 [0m0.185 ms - -[0m
+[0mGET /javascripts/init.js [36m304 [0m0.350 ms - -[0m
+[0mGET /images/condition_txt.png [36m304 [0m0.306 ms - -[0m
+[0mGET /images/feelings_txt.png [36m304 [0m0.270 ms - -[0m
+[0mGET /images/facebookLogin.png [36m304 [0m0.989 ms - -[0m
+[0mGET /css/font-awesome.min.css [36m304 [0m0.766 ms - -[0m
+[0mGET /css/images/overlay.png [36m304 [0m1.347 ms - -[0m
+[0mGET /images/feel2.png [36m304 [0m4.050 ms - -[0m
+[0mGET /images/feel1.png [36m304 [0m3.428 ms - -[0m
+[0mGET /images/banner.jpg [36m304 [0m1.941 ms - -[0m
+[0mGET /images/feel4.png [36m304 [0m1.937 ms - -[0m
+[0mGET /images/feel3.png [36m304 [0m0.214 ms - -[0m
+[0mGET /fonts/fontawesome-webfont.woff?v=4.2.0 [36m304 [0m0.742 ms - -[0m
+[0mGET /images/feel5.png [36m304 [0m0.680 ms - -[0m
+[0mGET /favicon.ico [33m404 [0m271.317 ms - 2312[0m
+[0mGET / [36m304 [0m6.911 ms - -[0m
+[0mGET /javascripts/jquery.min.js [36m304 [0m0.460 ms - -[0m
+[0mGET /javascripts/skel.min.js [36m304 [0m0.471 ms - -[0m
+[0mGET /javascripts/skel-layers.min.js [36m304 [0m0.280 ms - -[0m
+[0mGET /javascripts/init.js [36m304 [0m0.719 ms - -[0m
+[0mGET /css/skel.css [36m304 [0m0.830 ms - -[0m
+[0mGET /css/style.css [36m304 [0m1.168 ms - -[0m
+[0mGET /css/style-xlarge.css [36m304 [0m0.183 ms - -[0m
+[0mGET /images/condition_txt.png [36m304 [0m0.253 ms - -[0m
+[0mGET /images/feelings_txt.png [36m304 [0m0.208 ms - -[0m
+[0mGET /images/facebookLogin.png [36m304 [0m1.035 ms - -[0m
+[0mGET /css/font-awesome.min.css [36m304 [0m0.407 ms - -[0m
+[0mGET /images/banner.jpg [36m304 [0m0.882 ms - -[0m
+[0mGET /css/images/overlay.png [36m304 [0m1.437 ms - -[0m
+[0mGET /images/feel1.png [36m304 [0m1.497 ms - -[0m
+[0mGET /images/feel3.png [36m304 [0m1.727 ms - -[0m
+[0mGET /images/feel4.png [36m304 [0m1.265 ms - -[0m
+[0mGET /images/feel2.png [36m304 [0m1.258 ms - -[0m
+[0mGET /fonts/fontawesome-webfont.woff?v=4.2.0 [36m304 [0m0.211 ms - -[0m
+[0mGET /images/feel5.png [36m304 [0m0.190 ms - -[0m
+[0mGET / [36m304 [0m2.140 ms - -[0m
+[0mGET /javascripts/jquery.min.js [36m304 [0m0.953 ms - -[0m
+[0mGET /javascripts/skel.min.js [36m304 [0m1.034 ms - -[0m
+[0mGET /javascripts/skel-layers.min.js [36m304 [0m1.125 ms - -[0m
+[0mGET /javascripts/init.js [36m304 [0m1.134 ms - -[0m
+[0mGET /css/skel.css [36m304 [0m0.377 ms - -[0m
+[0mGET /css/style.css [36m304 [0m0.446 ms - -[0m
+[0mGET /css/style-xlarge.css [36m304 [0m0.191 ms - -[0m
+[0mGET /images/condition_txt.png [36m304 [0m0.196 ms - -[0m
+[0mGET /images/feelings_txt.png [36m304 [0m0.183 ms - -[0m
+[0mGET /images/facebookLogin.png [36m304 [0m0.181 ms - -[0m
+[0mGET /css/font-awesome.min.css [36m304 [0m0.542 ms - -[0m
+[0mGET /images/banner.jpg [36m304 [0m2.448 ms - -[0m
+[0mGET /images/feel2.png [36m304 [0m2.109 ms - -[0m
+[0mGET /css/images/overlay.png [36m304 [0m1.167 ms - -[0m
+[0mGET /images/feel1.png [36m304 [0m1.068 ms - -[0m
+[0mGET /images/feel3.png [36m304 [0m0.425 ms - -[0m
+[0mGET /images/feel4.png [36m304 [0m0.523 ms - -[0m
+[0mGET /fonts/fontawesome-webfont.woff?v=4.2.0 [36m304 [0m0.185 ms - -[0m
+[0mGET /images/feel5.png [36m304 [0m0.195 ms - -[0m
+events.js:160
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: Connection lost: The server closed the connection.
+  at Protocol.end (/home/ubuntu/VirtualEnvs/js_Node/nodeServer/node_modules/mysql/lib/protocol/Protocol.js:109:13)
+  at Socket.<anonymous> (/home/ubuntu/VirtualEnvs/js_Node/nodeServer/node_modules/mysql/lib/Connection.js:102:28)
+  at emitNone (events.js:91:20)
+  at Socket.emit (events.js:185:7)
+  at endReadableNT (_stream_readable.js:926:12)
+  at _combinedTickCallback (internal/process/next_tick.js:74:11)
+  at process._tickCallback (internal/process/next_tick.js:98:9)
+
+
+npm ERR! Linux 3.13.0-74-generic
+npm ERR! argv "/usr/bin/nodejs" "/usr/bin/npm" "start"
+npm ERR! node v6.2.0
+npm ERR! npm  v3.8.9
+npm ERR! code ELIFECYCLE
+npm ERR! nodeServer@0.0.0 start: `node ./bin/www`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the nodeServer@0.0.0 start script 'node ./bin/www'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the nodeServer package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     node ./bin/www
+npm ERR! You can get information on how to open an issue for this project with:
+npm ERR!     npm bugs nodeServer
+npm ERR! Or if that isn't available, you can get their info via:
+npm ERR!     npm owner ls nodeServer
+npm ERR! There is likely additional logging output above.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /home/ubuntu/VirtualEnvs/js_Node/nodeServer/npm-debug.log
