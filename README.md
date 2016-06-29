@@ -5,8 +5,9 @@
   
   
 # 개발 환경
-  - jQuery, javaScript, html (pront-end)
-  - Node.js (back-end)
+  - jQuery, javaScript, html 
+  - Node.js & Express
   - Mysql DB
+  - facebook API
   - mecab 형태소 분석 엔진
   - Amazon Web Service EC2 서버
